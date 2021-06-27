@@ -3,20 +3,18 @@
 <head>
   <link href="style.css" rel="stylesheet">
 </head>
-  
 <body>
-<h2>Add a User:</h2>
-<form id="add-user" method="POST">
-  <input type="text" id="name" name="username" placeholder="name" />
-  <input type="email" id="email" name="email" placeholder="email" onkeyup="validateEmail()" />
-  <button id="btn" onclick="work()">add user</button>
-</form>
-<div id="errors"></div>
-<h2>Users:</h2>
-<p id="info"> click a name to delete user</p>
-<ul id="users"></ul>
-  
+  <h2>Add a User</h2>
+  <form id="add-user" method="POST">
+    <input type="text" id="name" name="username" placeholder="name" />
+    <input type="email" id="email" name="email" placeholder="email" oninput="validateEmail()" />
+    <button id="btn" onclick="handleSubmit(event)">add user</button>
+    <p class="error"></p>
+  </form>
+  <div class="user-list-container user-list-container--hide">
+    <p> active users </p>
+    <ul class="user-list"></ul>
+  </div>
   <script src="script.js">
 </body>
-  
 </html>
