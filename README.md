@@ -9,8 +9,8 @@ Dynamically add a user to the users list using the existing with a json request
    - Dynamically add a user to the users list.
    - Submit the form with an attached event listener on the button.
    - Email address validated as user types.
-   -User notified when email is valid.
-   -Extra validation added which prevents form submission if any field is empty
+   - Prevent form submission if any field is empty.
+   - Prevent submission of exisiting username.
    - Highlights the email input with red when a user enters an invalid email address
    - Displays the following error message: "please enter a valid email address" in red when a user enters an invalid email address
    - If the ajax request returns an error, it displays the error message in red.
