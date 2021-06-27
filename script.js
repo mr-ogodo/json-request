@@ -1,71 +1,87 @@
-
 /*EMAIL VALIDATION*/
 function validateEmail(){
-  var email = document.getElementById("email");
-  var error = document.getElementById("errors");
-  var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,6})?$/;
-	if(!emailReg.test(email.value)){
+  const email = document.querySelector("#email");
+  const error = document.querySelector(".error");
+  const emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,6})?$/;
+  const isValidEmail = emailReg.test(email.value)
+  
+	if(!isValidEmail){
+  	if (email.value.length < 7) return;
+    
   	error.innerHTML = "please enter a valid email address";
-    error.style.color = "red";
-    email.style.border = "3px solid red";
-  }
-  else if(emailReg.test(email.value)){
-  	error.innerHTML = "valid email!";
-    error.style.color = "green";
-    email.style.border = "3px solid green";
+    error.classList.add('error--active');
+    email.classList.add('error--input');
+  } else {
+    error.classList.remove('error--active');
+    email.classList.remove('error--input');
   }
 }
 
-/*CALLBACK FUNCTION*/
-function callBack(response) {
-  var test = JSON.stringify(response.user.username);
-  var ul = document.getElementById("users");
-  var li = document.createElement("li");
-  if(test != "undefined"){
-    li.appendChild(document.createTextNode(test.split('"').join("")));
-    ul.appendChild(li);
-
-  }
-  else if(test == "undefined"){
-    var errors= document.getElementById("errors");
-    errors.innerHTML = "Oups, something went wrong!";
-    errors.style.color="red";
-  }
-
-
-  /*CLEAR INPUT ON SUBMIT*/
-  document.getElementById("name").value = "";
-  document.getElementById("email").value = "";  
-  document.getElementById("errors").innerHTML = "";
-  var emailInput = document.getElementById("email")
-  var info = document.getElementById("info");
-  emailInput.style.border = "1px solid grey";
-  info.style.display = "block";
-
-
-  //DELETE LIST ITEM
-  li.onclick = function() {
-    this.parentNode.removeChild(this);
-    }
-}
-
-
-
-/*FUNCTION CALLED ON BUTTON CLICK*/
- function work(){
+ function handleSubmit(event) {
   event.preventDefault();
- 	var username = document.getElementById("name").value;
- 	var email = document.getElementById("email").value;
+ 	const userName = document.querySelector("#name").value;
+  const email = document.querySelector("#email").value;
+  let response;
   
-  if(username && email != ""){
-  	addUser(username, email, callBack);
+  if (!userName || !email) {
+  	response = { error: "Both Fields are required" };
+  	handleError(response);
+  } else if (userExists(userName)) {
+  	response = { error: "username unavailable" };
+  	handleError(response);
+  } else {
+  	addUser(userName, email, handleResponse);
   }
-  else if(username || email == ""){
-  	var error = document.getElementById("errors")
-    error.innerHTML = "Please fill both fields"
-    error.style.color = "red";
+ }
+ 
+ function handleResponse(response) {
+  if (response.success) {
+    handleSuccess(response);
+    users.push({ ...response.user });
+  } else {
+    handleError(response);
   }
+ }
+ 
+ function handleSuccess(response) {
+  const usersContainer = document.querySelector(".user-list-container");
+ 	const users = document.querySelector(".user-list");
+  const userName = document.createElement('li');
   
+  document.querySelector('#name').value = "";
+  document.querySelector('#email').value = "";
+  document.querySelector(".error").classList.add('error--hide');
+
+  userName.innerHTML = response.user.username;
+  users.appendChild(userName);
+  usersContainer.classList.remove('user-list-container--hide');
+  usersContainer.children[0].innerHTML = "active users";
+  userName.addEventListener('click', deleteUser);
+ }
+ 
+ function handleError(response) {
+  const errorContainer = document.querySelector(".error");
+
+  errorContainer.innerHTML = response.error;
+  errorContainer.classList.remove("error--hide");
+  errorContainer.classList.add("error--active");
+ }
+ 
+ function deleteUser(event) {
+  const user = event.target;
+  const userList = document.querySelector(".user-list");
+  const container = user.closest('.user-list-container');
+ 
+  user.remove();
+  if (!userList.firstChild) {
+  	container.children[0].innerHTML = "no users found";
+  }
+ }
+ 
+ const users = [];
+ 
+ function userExists(userName) {
+  return users.some((user) => user.username === userName);
  }
  
 
@@ -94,5 +110,3 @@ function addUser(username, email, callback) {
     success:  callback
   });
 }
-
-
